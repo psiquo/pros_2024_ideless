@@ -1,12 +1,13 @@
 #include <stdint.h>
 #define STM32F407xx
 #include "stm32f4xx.h"
+#include "stm32f4xx_hal.h"
 
 
 uint32_t ticks;
 uint32_t counter = 0;
 
-uint32_t leds[] = {12,13,14,15};
+uint32_t leds[] = {GPIO_PIN_12,GPIO_PIN_13,GPIO_PIN_14,GPIO_PIN_15};
 
 void SysTick_Handler(void){
   ticks++;
@@ -53,7 +54,6 @@ void gpio_setup(void) {
     GPIOA->PUPDR &= (~GPIO_PUPDR_PUPD0_Msk);
     GPIOA->PUPDR |= (0x10U << GPIO_PUPDR_PUPD0_Pos);
 }
-
 void EXTI0_IRQHandler(void) {
   if (EXTI->PR & 1) {
     EXTI->PR |= 1;
@@ -67,14 +67,12 @@ void main(void) {
     __enable_irq();
 
     gpio_setup();
-    interrupt_setup();
-
-    
+    //interrupt_setup();
 
      while (1)
      {   
-    //     GPIOD->ODR ^= (1 << leds[counter++ % 4]);
-    //     delay(100);
+         HAL_GPIO_TogglePin(GPIOD,leds[counter++ % 4]);
+         delay(100);
      }
     
 }
